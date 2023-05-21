@@ -9,7 +9,7 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 ## Todo
 
 - [X] Create repository.
-- [ ] Create version 1 of documentation.
+- [X] Create version 1 of documentation.
 - [ ] 2 queries on classes or properties.
 - [ ] 5 queries on individuals.
 - [ ] 3 queries that demonstrate the reasoning in the database, meaning that when reasoning is on there are more results extracted, compared to when reasoning is off.
