@@ -21,6 +21,7 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 
 ## Resources
 
+- [Querying Wikidata with SPARQL for Absolute Beginners](https://www.youtube.com/watch?v=kJph4q0Im98)
 - [Tutorial: Introduction to RDF and OWL](https://csiro-enviro-informatics.github.io/info-engineering/tutorials/tutorial-intro-to-rdf-and-owl.html)
 - [Tutorial 1 (10 videos)](https://www.youtube.com/watch?v=nbUYrs_wWto&list=PLaa8QYrMzXNnzY-4YVM5507iZuESWVcnU)
 - [Tutorial 2 (29 videos)](https://www.youtube.com/watch?v=r7N7s1yejFQ&list=PLea0WJq13cnA6k4B6Tr1ljj2nleUl9dZt)
