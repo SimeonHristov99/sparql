@@ -232,6 +232,4 @@
     WHERE
     {
         ?pizzaName rdfs:subClassOf pizza:Pizza.
-        ?restrBase owl:onProperty pizza:hasBase ;
-                   owl:allValuesFrom pizza:ThinAndCrispyBase.
     }
