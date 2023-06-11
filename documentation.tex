@@ -11,10 +11,23 @@
 \usepackage{booktabs}   
 \usepackage{ltablex}
 
+% For SPARQL syntax
+\usepackage{listings}
+\lstdefinestyle{sparql}{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  keepspaces=true,
+  keywordstyle=\bfseries,
+  morekeywords={PREFIX,SELECT,FROM,WHERE,ORDER,BY,FILTER, GROUP, AS, BIND, IF, DESC, ASC},
+  sensitive=false,
+  showstringspaces=false,
+  tabsize=4,
+  frame=single
+}
+
+
 % \usepackage{sidecap} % side captions
 % \usepackage[top=1.3in, bottom=1.5in, left=1.3in, right=1.3in]{geometry}
-
-\parindent 0px % turn off indenting
 
 % have nicer-looking links
 \usepackage{hyperref}
@@ -25,11 +38,6 @@
   citecolor   = blue
 }
 \usepackage[hypcap=true]{caption}
-
-% turn off sections numbers
-\makeatletter
-\renewcommand{\@seccntformat}[1]{}
-\makeatother
 
 
 \newcommand{\JMUTitle}[9]{
@@ -141,7 +149,7 @@
 
     GraphDB съхранява експлицитни и имплицитни твърдения (твърдения, изведени от експлицитни твърдения). Когато експлицитно твърдение се премахне от базата знания, всички имплицитни твърдения, които са изведени от него също трябва да бъдат премахнати.
     
-    Премахването на експлицитни твърдения се постига чрез анулиране на изведените твърдения, които вече не могат да бъдат извлечени. Един подход е да се поддържа информация за проследяване за всяко твърдение - обикновено списъкът с твърдения, които могат да бъдат изведени от това твърдение. Списъкът се изгражда по време на извода, тъй като правилата се прилагат и твърденията, изведени от правилата, се добавят към списъците на всички твърдения, които са задействали изводите. Недостатъкът на тази техника е, че информацията за веригата расте по-бързо от подразбираното затваряне. Друг подход е да се извърши обратен извод. Този вид извод не изисква информация за веригата, тъй като той по същество я преизчислява. За тази цел се използва флаг за всяко твърдение, така че алгоритъмът да може да открие кога даден ъзелв е бил посетен преди това и по този начин да избегне безкрайна рекурсия.
+    Премахването на експлицитни твърдения се постига чрез анулиране на изведените твърдения, които вече не могат да бъдат извлечени. Един подход е да се поддържа информация за проследяване за всяко твърдение - обикновено списъкът с твърдения, които могат да бъдат изведени от това твърдение. Списъкът се изгражда по време на извода, тъй като правилата се прилагат и твърденията, изведени от правилата, се добавят към списъците на всички твърдения, които са задействали изводите. Недостатъкът на тази техника е, че информацията за веригата расте по-бързо от подразбираното затваряне. Друг подход е да се извърши обратен извод. Този вид извод не изисква информация за веригата, тъй като той по същество я преизчислява. За тази цел се използва флаг за всяко твърдение, така че алгоритъмът да може да открие кога даден възел е бил посетен преди това и по този начин да избегне безкрайна рекурсия.
 
     Алгоритъмът, използван в GraphDB, работи по следния начин:
 
@@ -162,7 +170,640 @@
 
 \section{Заявки и резултати}
 
-todo
+    \subsection{Заявки върху класове}
+
+        Заявка 1, намираща всички гарнитури, които са \textit{FishTopping}.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?topping
+WHERE { ?topping rdfs:subClassOf pizza:FishTopping }\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q01]{Фигура~\ref*{fig:q01}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q01.png}
+                \caption{Резултат от изпълнение на заявка 1.}
+                \label{fig:q01}
+            \end{figure}
+        \end{center}
+
+\clearpage
+\pagebreak
+
+        Заявка 2, намираща всички пици, които имат гарнитура \textit{AnchoviesTopping}.
+
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT DISTINCT ?pizza
+WHERE {
+    ?pizza rdfs:subClassOf pizza:NamedPizza .
+    ?pizza rdfs:subClassOf ?restriction .
+    ?restriction owl:onProperty pizza:hasTopping .
+    ?restriction owl:someValuesFrom pizza:AnchoviesTopping .
+}\end{lstlisting}
+    
+        Резултатът от изпълнението е показан на \hyperref[fig:q02]{Фигура~\ref*{fig:q02}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q02.png}
+                \caption{Резултат от изпълнение на заявка 2.}
+                \label{fig:q02}
+            \end{figure}
+        \end{center}
+   
+\clearpage
+\pagebreak
+     
+    \subsection{Заявки върху екземпляри}
+
+        Заявка 3, намираща всички екземпляри.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT ?name
+WHERE { ?name a owl:NamedIndividual . }\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q03]{Фигура~\ref*{fig:q03}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q03.png}
+                \caption{Резултат от изпълнение на заявка 3.}
+                \label{fig:q03}
+            \end{figure}
+        \end{center}
+
+\clearpage
+\pagebreak
+
+        Заявка 4, намираща всички екземпляри, чиито имена започват с гласна буква ('a', 'e', 'i', 'o' или 'u').
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT ?name ?string ?substring
+WHERE {
+    ?name a owl:NamedIndividual .
+    BIND(STR(?name) AS ?string) .
+    BIND(SUBSTR(?string, 50) AS ?substring) .
+    FILTER REGEX (?substring, "^(a|e|i|o|u)", "i") .
+}\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q04]{Фигура~\ref*{fig:q04}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q04.png}
+                \caption{Резултат от изпълнение на заявка 4.}
+                \label{fig:q04}
+            \end{figure}
+        \end{center}
+
+\clearpage
+\pagebreak
+
+        Заявка 5, намираща броя пици за всяка държава, за която са създадени пици.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?countryName (COUNT (DISTINCT ?name) AS ?numPizzas)
+WHERE {
+    ?name rdfs:subClassOf pizza:NamedPizza, ?restr .
+    ?restr owl:onProperty pizza:hasCountryOfOrigin ;
+        owl:hasValue ?countryName .
+}
+GROUP BY ?countryName\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q05]{Фигура~\ref*{fig:q05}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q05.png}
+                \caption{Резултат от изпълнение на заявка 5.}
+                \label{fig:q05}
+            \end{figure}
+        \end{center}
+    
+\clearpage
+\pagebreak
+
+        Заявка 6, намираща степента на пикантност на пиците за всяка държава.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?countryName ?pizzaName ?spiciness
+WHERE {
+    ?pizzaName rdfs:subClassOf pizza:NamedPizza,
+                            ?restrCountry,
+                            ?restrTopping .
+    ?restrTopping owl:onProperty     pizza:hasTopping ;
+                  owl:someValuesFrom ?topping .
+    ?topping rdfs:subClassOf ?restrToppingSpiciness.
+    ?restrToppingSpiciness owl:onProperty pizza:hasSpiciness ;
+                           owl:someValuesFrom ?spiciness .
+    ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                owl:hasValue ?countryName .
+}\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q06]{Фигура~\ref*{fig:q06}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q06.png}
+                \caption{Резултат от изпълнение на заявка 6.}
+                \label{fig:q06}
+            \end{figure}
+        \end{center}
+    
+\clearpage
+\pagebreak
+
+        Заявка 7, намираща държавите, за които са създадени пици със степен на пикантност \textit{Hot} и броя на тези пици.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT
+    DISTINCT ?countryName
+    (COUNT(DISTINCT ?pizzaName) AS ?hotPizzaCount)
+WHERE {
+    ?pizzaName rdfs:subClassOf pizza:NamedPizza,
+                               ?restrCountry,
+                               ?restrTopping .
+    ?restrTopping owl:onProperty pizza:hasTopping ;
+                  owl:someValuesFrom ?topping .
+    ?topping rdfs:subClassOf ?restrToppingSpiciness .
+    ?restrToppingSpiciness owl:onProperty pizza:hasSpiciness ;
+                           owl:someValuesFrom pizza:Hot .
+    ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                  owl:hasValue ?countryName .
+}
+GROUP BY ?countryName\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q07]{Фигура~\ref*{fig:q07}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q07.png}
+                \caption{Резултат от изпълнение на заявка 7.}
+                \label{fig:q07}
+            \end{figure}
+        \end{center}
+                
+\clearpage
+\pagebreak
+
+    \subsection{Заявки, с повече от един концепт и повече от един FILTER}
+
+        Заявка 8, намираща всички гарнитури на пиците, чиито имена са с повече от 5 символа.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT DISTINCT ?pizza ?topping
+WHERE {
+    ?pizza rdfs:subClassOf pizza:NamedPizza, ?restr .
+    ?restr owl:onProperty pizza:hasTopping ;
+            owl:someValuesFrom ?topping .
+    FILTER NOT EXISTS {
+      ?topping rdfs:subClassOf ?restrToppingSpiciness .
+      ?restrToppingSpiciness owl:onProperty pizza:hasSpiciness;
+                             owl:someValuesFrom pizza:Hot .
+    }
+    FILTER ((STRLEN(str(?pizza)) - 49) > 5)
+}
+ORDER BY ?pizza\end{lstlisting}
+
+        Резултатът от изпълнението е обемен (93 реда). Затова към предадените файлове има и \textit{csv} файлове. Резултатът от тази заявка се намира в \textit{query\-result\_q8.csv}. Първите 5 реда са показани на \hyperref[fig:q08]{Фигура~\ref*{fig:q08}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q08.png}
+                \caption{Частичен резултат от изпълнение на заявка 8.}
+                \label{fig:q08}
+            \end{figure}
+        \end{center}
+            
+\clearpage
+\pagebreak
+
+        Заявка 9, намираща пиците и гарнитурите им за всички пици, които имат вид месна гарнитура, чието име започва със съгласна буква, и нямат гарнитура от вид \textit{HotSpicedBeefTopping}.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT DISTINCT ?pizza ?name
+WHERE {
+    ?name rdfs:subClassOf pizza:MeatTopping.
+    BIND(STR(?name) AS ?string)
+    BIND(SUBSTR(?string, 50 ) AS ?substring)
+    FILTER(REGEX(?substring, "^[^(a|e|i|o|u)]", "i"))
+        
+    ?pizza rdfs:subClassOf pizza:NamedPizza, ?restrTopping.
+    ?restrTopping owl:onProperty pizza:hasTopping;
+                    owl:someValuesFrom ?name.
+    FILTER NOT EXISTS {
+        ?pizza rdfs:subClassOf pizza:NamedPizza, ?restrTopping.
+        ?restrTopping owl:onProperty pizza:hasTopping;
+                owl:someValuesFrom pizza:HotSpicedBeefTopping.
+    }
+}\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q09]{Фигура~\ref*{fig:q09}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q09.png}
+                \caption{Резултат от изпълнение на заявка 9.}
+                \label{fig:q09}
+            \end{figure}
+        \end{center}
+    
+\clearpage
+\pagebreak
+
+        Заявка 10, намираща имената на всички пици, които не са от Америка и нямат гарнитура \textit{TomatoTopping} и гарнитура \textit{MushroomTopping}.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT ?pizzaName ?toppingName
+WHERE {
+    ?pizzaName rdfs:subClassOf pizza:NamedPizza, ?restrTopping .
+    ?restrTopping owl:onProperty pizza:hasTopping ;
+                owl:someValuesFrom ?toppingName .
+    
+    FILTER NOT EXISTS {
+        ?restrTopping owl:someValuesFrom pizza:TomatoTopping .
+    }
+    FILTER NOT EXISTS {
+        ?restrTopping owl:someValuesFrom pizza:MushroomTopping .
+    }
+    FILTER NOT EXISTS {
+        ?pizzaName rdfs:subClassOf ?restrCountry .
+        ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                    owl:hasValue pizza:America .
+    }
+}\end{lstlisting}
+
+        Резултатът от изпълнението е обемен (160 реда) и се намира в \textit{query\-result\_q10.csv}. Първите 5 реда са показани на \hyperref[fig:q10]{Фигура~\ref*{fig:q10}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q10.png}
+                \caption{Частичен резултат от изпълнение на заявка 10.}
+                \label{fig:q10}
+            \end{figure}
+        \end{center}
+        
+\clearpage
+\pagebreak
+
+    \subsection{Заявки, демонстриращи логически извод}
+
+        Заявка 11, намираща имената на всички видове пици.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?pizzaName
+WHERE { ?pizzaName rdfs:subClassOf pizza:Pizza. }\end{lstlisting}
+
+        Резултатът от изпълнението без логически извод е показан на \hyperref[fig:q11-01]{Фигура~\ref*{fig:q11-01}}.
+        Резултатът от изпълнението с логически извод е показан на \hyperref[fig:q11-02]{Фигура~\ref*{fig:q11-02}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q11-01.png}
+                \caption{Резултат от изпълнение на заявка 11 без логически извод.}
+                \label{fig:q11-01}
+            \end{figure}
+        \end{center}
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q11-02.png}
+                \caption{Резултат от изпълнение на заявка 11 с логически извод.}
+                \label{fig:q11-02}
+            \end{figure}
+        \end{center}
+
+
+\clearpage
+\pagebreak
+
+        Заявка 12, намираща пиците, създадени в Италия.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?pizzaName
+WHERE {
+    ?pizzaName rdfs:subClassOf pizza:Pizza,
+                               ?restrCountry .
+    ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                  owl:hasValue pizza:Italy .
+}\end{lstlisting}
+
+        Резултатът от изпълнението без логически извод е показан на \hyperref[fig:q12-01]{Фигура~\ref*{fig:q12-01}}.
+        Резултатът от изпълнението с логически извод е показан на \hyperref[fig:q12-02]{Фигура~\ref*{fig:q12-02}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q12-01.png}
+                \caption{Резултат от изпълнение на заявка 12 без логически извод.}
+                \label{fig:q12-01}
+            \end{figure}
+        \end{center}
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q12-02.png}
+                \caption{Резултат от изпълнение на заявка 12 с логически извод.}
+                \label{fig:q12-02}
+            \end{figure}
+        \end{center}
+
+\clearpage
+\pagebreak
+
+        Заявка 13, намираща имената на пиците и гарнитурите, които имат име на гарнитура, започващо със съгласна буква и завършващо с гласна.
+        
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?pizza ?name
+WHERE {
+    ?name rdfs:subClassOf pizza:PizzaTopping.
+    BIND(STR(?name) as ?string) .
+    BIND(SUBSTR(?string, 50) as ?substring) .
+    FILTER REGEX (?substring, "^[^(a|e|i|o|u)]", "i") .
+    FILTER REGEX (?substring, "(a|e|i|o|u)$", "i") .
+    
+    ?pizza rdfs:subClassOf pizza:NamedPizza,
+                           ?restrTopping .
+    ?restrTopping owl:onProperty pizza:hasTopping ;
+                  owl:someValuesFrom ?name .
+}\end{lstlisting}
+
+        Резултатът от изпълнението без логически извод е показан на \hyperref[fig:q13-01]{Фигура~\ref*{fig:q13-01}}.
+        Резултатът от изпълнението с логически извод е показан на \hyperref[fig:q13-02]{Фигура~\ref*{fig:q13-02}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q13-01.png}
+                \caption{Резултат от изпълнение на заявка 13 без логически извод.}
+                \label{fig:q13-01}
+            \end{figure}
+        \end{center}
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q13-02.png}
+                \caption{Резултат от изпълнение на заявка 13 с логически извод.}
+                \label{fig:q13-02}
+            \end{figure}
+        \end{center}
+
+        
+\clearpage
+\pagebreak
+
+    \subsection{Заявки, с операции върху множества}
+
+        Заявка 14, която намира всички пици, които имат имена с начална буква "S" или имат гарнитура \textit{PeperonataTopping}. За да се постигнат докладваните резултати е необходимо да се използва логически извод.
+
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+SELECT DISTINCT ?pizzaName
+WHERE {
+    {
+        ?pizzaName rdfs:subClassOf pizza:Pizza ;
+                rdfs:label ?label .
+        FILTER regex(?label, "^S")
+    }
+    UNION
+    {
+        ?pizzaName rdfs:subClassOf pizza:Pizza,
+                                   ?restrictionTopping .
+        ?restrictionTopping owl:onProperty pizza:hasTopping ;
+                owl:someValuesFrom pizza:PeperonataTopping .
+    }
+}\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q14]{Фигура~\ref*{fig:q14}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q14.png}
+                \caption{Резултат от изпълнение на заявка 14.}
+                \label{fig:q14}
+            \end{figure}
+        \end{center}
+                
+\clearpage
+\pagebreak
+
+        Заявка 15, която намира всички класове и техните етикети. За да се постигнат докладваните резултати е необходимо да се използва логически извод.
+
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?name ?label
+WHERE {
+    ?name rdfs:subClassOf ?cls .
+    OPTIONAL {
+        ?name rdfs:label ?label .
+    }
+}\end{lstlisting}
+
+        Резултатът от изпълнението е обемен (228 реда) и се намира в \textit{query\-result\_q15.csv}. Първите 5 реда са показани на \hyperref[fig:q15]{Фигура~\ref*{fig:q15}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q15.png}
+                \caption{Частичен резултат от изпълнение на заявка 15.}
+                \label{fig:q15}
+            \end{figure}
+        \end{center}
+                
+\clearpage
+\pagebreak
+
+    \subsection{Заявки с функции за запазване на стойност в параметър}
+        
+        Заявка 16, която намира имената и дължините на имената на всички пици с име.
+
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?pizza ?nameLength
+WHERE {
+    ?pizza rdfs:subClassOf pizza:NamedPizza;
+        rdfs:label ?name.
+    BIND(STRLEN(SUBSTR(STR(?pizza), 50)) AS ?nameLength)
+}
+ORDER BY ?nameLength ?pizza\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q16]{Фигура~\ref*{fig:q16}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q16.png}
+                \caption{Резултат от изпълнение на заявка 16.}
+                \label{fig:q16}
+            \end{figure}
+        \end{center}
+                
+\clearpage
+\pagebreak
+
+        Заявка 17, която за пиците \textit{Margherita}, \textit{LaReine},  \textit{VegetarianPizza} намира
+ тяхната цена или показва текста \textit{Price not available}, ако такава не е налична.
+ 
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?pizza ?priceInDollars
+WHERE {
+    VALUES ?pizza {
+        pizza:Margherita
+        pizza:LaReine
+        pizza:VegetarianPizza
+    }
+    OPTIONAL { ?pizza pizza:hasPrice ?price. }
+    BIND(
+        IF(BOUND(?price),
+        ?price * "1.2"^^xsd:decimal,
+        "Price not available"
+    ) AS ?priceInDollars)
+}\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q17]{Фигура~\ref*{fig:q17}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q17.png}
+                \caption{Резултат от изпълнение на заявка 17.}
+                \label{fig:q17}
+            \end{figure}
+        \end{center}
+            
+\clearpage
+\pagebreak
+
+    \subsection{Заявки, с агрегиращи функции}
+        
+        Заявка 18, която за всички гарнитури намира в колко пици се срещат те.
+
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?topping (COUNT(DISTINCT ?pizza) AS ?numPizzas)
+WHERE {
+    ?pizza rdfs:subClassOf pizza:Pizza, ?restrTopping .
+    ?restrTopping owl:onProperty pizza:hasTopping ;
+                owl:someValuesFrom ?topping .
+}
+GROUP BY ?topping
+ORDER BY DESC(?numPizzas) ASC(?topping)\end{lstlisting}
+
+        Резултатът от изпълнението е обемен (37 реда) и се намира в \textit{query\-result\_q18.csv}. Първите 5 реда са показани на \hyperref[fig:q18]{Фигура~\ref*{fig:q18}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q18.png}
+                \caption{Резултат от изпълнение на заявка 18.}
+                \label{fig:q18}
+            \end{figure}
+        \end{center}
+        
+\clearpage
+\pagebreak
+
+        Заявка 18, която за всички пици намира колко гарнитури имат те.
+
+        \begin{lstlisting}[language=SPARQL,style=sparql]
+PREFIX pizza:<http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?pizza (COUNT(DISTINCT ?topping) AS ?numTopping)
+WHERE {
+    ?pizza rdfs:subClassOf pizza:NamedPizza, ?restrTopping .
+    ?restrTopping owl:onProperty pizza:hasTopping ;
+                owl:someValuesFrom ?topping .
+}
+GROUP BY ?pizza
+ORDER BY DESC(?numTopping) ASC(?pizza)\end{lstlisting}
+
+        Резултатът от изпълнението е показан на \hyperref[fig:q19]{Фигура~\ref*{fig:q19}}.
+
+        \begin{center}
+            \begin{figure}
+            \centering
+                \includegraphics[scale=0.3]{./images/q19.png}
+                \caption{Резултат от изпълнение на заявка 19.}
+                \label{fig:q19}
+            \end{figure}
+        \end{center}
+        
+\clearpage
+\pagebreak
 
 \section{Използвани технологии}
 
