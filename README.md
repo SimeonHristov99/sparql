@@ -16,8 +16,8 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 - [X] 3 queries that demonstrate the reasoning in the database, meaning that when reasoning is on there are more results extracted, compared to when reasoning is off.
 - [X] 2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.).
 - [X] 2 queries use assigning variables functions (BIND, BIND IF, VALUES).
-- [ ] 2 queries use aggregating functions (COUNT, MIN, MAX, AVG, GROUP BY).
-- [ ] Finish documentation.
+- [X] 2 queries use aggregating functions (COUNT, MIN, MAX, AVG, GROUP BY).
+- [ ] Finish documentation (~47 words explaining each query).
 
 ## Resources
 

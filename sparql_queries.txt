@@ -306,3 +306,36 @@
         OPTIONAL { ?pizza pizza:hasPrice ?price. }
         BIND(IF(BOUND(?price), ?price * "1.2"^^xsd:decimal, "Price not available") AS ?priceInDollars)
     }
+
+
+2 queries use aggregating functions (COUNT, MIN, MAX, AVG, GROUP BY).
+
+    # Query 18: Get all toppings and the number of pizzas that have each of them.
+
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT ?topping (COUNT(DISTINCT ?pizza) AS ?numPizzas)
+    WHERE {
+        ?pizza rdfs:subClassOf pizza:Pizza, ?restrTopping .
+        ?restrTopping owl:onProperty pizza:hasTopping ;
+                    owl:someValuesFrom ?topping .
+    }
+    GROUP BY ?topping
+    ORDER BY DESC(?numPizzas) ASC(?topping)
+
+    # Query 19: Get all pizzas and the number of toppings each of them has.
+
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT ?pizza (COUNT(DISTINCT ?topping) AS ?numTopping)
+    WHERE {
+        ?pizza rdfs:subClassOf pizza:NamedPizza, ?restrTopping .
+        ?restrTopping owl:onProperty pizza:hasTopping ;
+                    owl:someValuesFrom ?topping .
+    }
+    GROUP BY ?pizza
+    ORDER BY DESC(?numTopping) ASC(?pizza)
