@@ -13,10 +13,10 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 - [X] 2 queries on classes or properties.
 - [X] 5 queries on individuals.
 - [X] 3 queries use more than one concept in the knowledge base and use more than once FILTER.
+- [X] 3 queries that demonstrate the reasoning in the database, meaning that when reasoning is on there are more results extracted, compared to when reasoning is off.
 - [ ] 2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.).
 - [ ] 2 queries use assigning variables functions (BIND, BIND IF, VALUES).
 - [ ] 2 queries use aggregating functions (COUNT, MIN, MAX, AVG, GROUP BY).
-- [ ] 3 queries that demonstrate the reasoning in the database, meaning that when reasoning is on there are more results extracted, compared to when reasoning is off.
 - [ ] Finish documentation.
 
 ## Resources
