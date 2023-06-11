@@ -6,7 +6,7 @@ Explore the world of GraphDB and SPARQL using the Pizza ontology.
 
 Using the pizza ontology as created [here](https://protege.stanford.edu/ontologies/pizza/pizza.owl). A `.ttl` version is available [here](https://github.com/avicomp/ont-api/blob/master/src/test/resources/ontapi/pizza.ttl).
 
-## Todo
+## Plan of Attack
 
 - [X] Create repository.
 - [X] Create version 1 of documentation.
