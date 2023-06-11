@@ -275,3 +275,34 @@
         }
     }
 
+
+2 queries use assigning variables functions (BIND, BIND IF, VALUES).
+
+    # Query 16: Get the names of all named pizzas and their lengths.
+
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT DISTINCT ?pizza ?nameLength
+    WHERE {
+        ?pizza rdfs:subClassOf pizza:NamedPizza;
+            rdfs:label ?name.
+        BIND(STRLEN(SUBSTR(STR(?pizza), 50)) AS ?nameLength)
+    }
+    ORDER BY ?nameLength ?pizza
+
+    # Query 17: For the pizzas "Margherita", "LaReine", and "VegetarianPizza" get the price or return "Price not available" if price is not present.
+
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+    SELECT ?pizza ?priceInDollars
+    WHERE {
+        VALUES ?pizza {
+            pizza:Margherita
+            pizza:LaReine
+            pizza:VegetarianPizza
+        }
+        OPTIONAL { ?pizza pizza:hasPrice ?price. }
+        BIND(IF(BOUND(?price), ?price * "1.2"^^xsd:decimal, "Price not available") AS ?priceInDollars)
+    }
