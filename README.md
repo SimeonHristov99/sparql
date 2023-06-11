@@ -26,3 +26,6 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 - [Tutorial 1 (10 videos)](https://www.youtube.com/watch?v=nbUYrs_wWto&list=PLaa8QYrMzXNnzY-4YVM5507iZuESWVcnU)
 - [Tutorial 2 (29 videos)](https://www.youtube.com/watch?v=r7N7s1yejFQ&list=PLea0WJq13cnA6k4B6Tr1ljj2nleUl9dZt)
 - [SPARQL in 11 minutes](https://www.youtube.com/watch?v=FvGndkpa4K0)
+- [SPARQL/Expressions and Functions](https://en.wikibooks.org/wiki/SPARQL/Expressions_and_Functions)
+- [SPARQL/Aggregate functions](https://en.wikibooks.org/wiki/SPARQL/Aggregate_functions)
+- [SPARQL/FILTER](https://en.wikibooks.org/wiki/SPARQL/FILTER)
