@@ -45,6 +45,8 @@
     PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
+    # NOTE: 49 is the length of the predix for pizza, i.e. len('http://www.co-ode.org/ontologies/pizza/pizza.owl#')=49.
+    # Below we have 50 so as to start from the first character after the "#" symbol.
     SELECT ?name ?string ?substring
     WHERE {
         ?name rdf:type owl:NamedIndividual .
@@ -108,3 +110,74 @@
                     owl:hasValue ?countryName .
     }
     GROUP BY ?countryName
+
+
+3 queries use more than one concept in the knowledge base and use more than once FILTER.
+
+    # Query 08: From all pizzas with names that have more than 5 characters get their names and their toppings which are not "Hot".
+
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT DISTINCT ?pizza ?topping
+    WHERE {
+        ?pizza rdfs:subClassOf pizza:NamedPizza, ?restr .
+        ?restr owl:onProperty pizza:hasTopping ;
+                owl:someValuesFrom ?topping .
+        FILTER NOT EXISTS {
+            ?topping rdfs:subClassOf ?restrToppingSpiciness .
+            ?restrToppingSpiciness owl:onProperty pizza:hasSpiciness ;
+                                owl:someValuesFrom pizza:Hot .
+        }
+        FILTER ((STRLEN(str(?pizza)) - 49) > 5)
+    }
+    ORDER BY ?pizza
+
+    # Query 09: Get the names of the pizzas and their toppings that have a meat topping that starts with a consonant and do not have a hot spiced beef topping.
+
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT DISTINCT ?pizza ?name
+    WHERE {
+        ?name rdfs:subClassOf pizza:MeatTopping.
+        BIND(STR(?name) AS ?string)
+        BIND(SUBSTR(?string, 50 ) AS ?substring)
+        FILTER(REGEX(?substring, "^[^(a|e|i|o|u)]", "i"))
+            
+        ?pizza rdfs:subClassOf pizza:NamedPizza, ?restrTopping.
+        ?restrTopping owl:onProperty pizza:hasTopping;
+                        owl:someValuesFrom ?name.
+        FILTER NOT EXISTS {
+            ?pizza rdfs:subClassOf pizza:NamedPizza, ?restrTopping.
+            ?restrTopping owl:onProperty pizza:hasTopping;
+                        owl:someValuesFrom pizza:HotSpicedBeefTopping.
+        }
+    }
+
+    # Query 10: Get the names of the non-american pizzas and their toppings that have either tomato or mushroom topping.
+
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT ?pizzaName ?toppingName
+    WHERE {
+        ?pizzaName rdfs:subClassOf pizza:NamedPizza, ?restrTopping .
+        ?restrTopping owl:onProperty pizza:hasTopping ;
+                    owl:someValuesFrom ?toppingName .
+        
+        FILTER NOT EXISTS {
+            ?restrTopping owl:someValuesFrom pizza:TomatoTopping .
+        }
+        FILTER NOT EXISTS {
+            ?restrTopping owl:someValuesFrom pizza:MushroomTopping .
+        }
+        FILTER NOT EXISTS {
+            ?pizzaName rdfs:subClassOf ?restrCountry .
+            ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                        owl:hasValue pizza:America .
+        }
+    }

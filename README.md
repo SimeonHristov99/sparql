@@ -12,7 +12,7 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 - [X] Create version 1 of documentation.
 - [X] 2 queries on classes or properties.
 - [X] 5 queries on individuals.
-- [ ] 3 queries use more than one concept in the knowledge base and use more than once FILTER.
+- [X] 3 queries use more than one concept in the knowledge base and use more than once FILTER.
 - [ ] 2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.).
 - [ ] 2 queries use assigning variables functions (BIND, BIND IF, VALUES).
 - [ ] 2 queries use aggregating functions (COUNT, MIN, MAX, AVG, GROUP BY).
