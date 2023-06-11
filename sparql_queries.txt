@@ -192,19 +192,8 @@
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-    SELECT DISTINCT ?pizza ?name
-    WHERE {
-        ?name rdfs:subClassOf pizza:PizzaTopping.
-        BIND(STR(?name) as ?string) .
-        BIND(SUBSTR(?string, 50) as ?substring) .
-        FILTER REGEX (?substring, "^[^(a|e|i|o|u)]", "i") .
-        FILTER REGEX (?substring, "(a|e|i|o|u)$", "i") .
-        
-        ?pizza rdfs:subClassOf pizza:NamedPizza,
-                               ?restrTopping .
-        ?restrTopping owl:onProperty pizza:hasTopping ;
-                      owl:someValuesFrom ?name .
-    }
+    SELECT DISTINCT ?pizzaName
+    WHERE { ?pizzaName rdfs:subClassOf pizza:Pizza. }
 
     # Query 12: Get the names of the pizzas that have a country of originate from Italy.
 
@@ -228,14 +217,22 @@
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-    SELECT DISTINCT ?pizzaName
-    WHERE
-    {
-        ?pizzaName rdfs:subClassOf pizza:Pizza.
+    SELECT DISTINCT ?pizza ?name
+    WHERE {
+        ?name rdfs:subClassOf pizza:PizzaTopping.
+        BIND(STR(?name) as ?string) .
+        BIND(SUBSTR(?string, 50) as ?substring) .
+        FILTER REGEX (?substring, "^[^(a|e|i|o|u)]", "i") .
+        FILTER REGEX (?substring, "(a|e|i|o|u)$", "i") .
+        
+        ?pizza rdfs:subClassOf pizza:NamedPizza,
+                               ?restrTopping .
+        ?restrTopping owl:onProperty pizza:hasTopping ;
+                      owl:someValuesFrom ?name .
     }
 
 
-2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.‘).
+2 queries use set operations (UNION, MINUS, 'OPTIONAL', '.').
 
     # Query 14: Get all pizzas that either start with the letter "S" or have a peperonata topping.
 
