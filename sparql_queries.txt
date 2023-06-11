@@ -233,3 +233,45 @@
     {
         ?pizzaName rdfs:subClassOf pizza:Pizza.
     }
+
+
+2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.‘).
+
+    # Query 14: Get all pizzas that either start with the letter "S" or have a peperonata topping.
+
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    # NOTE: Requires inference to display results.
+    SELECT DISTINCT ?pizzaName
+    WHERE {
+        {
+            ?pizzaName rdfs:subClassOf pizza:Pizza ;
+                    rdfs:label ?label .
+            FILTER regex(?label, "^S")
+        }
+        UNION
+        {
+            ?pizzaName rdfs:subClassOf pizza:Pizza, ?restrictionTopping .
+            ?restrictionTopping owl:onProperty pizza:hasTopping ;
+                                owl:someValuesFrom pizza:PeperonataTopping .
+        }
+    }
+
+    # Query 15: Get all subclasses and their label.
+
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    # NOTE: Requires inference to display results with empty label.
+    SELECT DISTINCT ?name ?label
+    WHERE {
+        ?name rdfs:subClassOf ?cls .
+        OPTIONAL {
+            ?name rdfs:label ?label .
+        }
+    }
+
