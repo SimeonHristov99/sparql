@@ -10,7 +10,6 @@
         ?topping rdfs:subClassOf pizza:FishTopping
     }
 
-
     # Query 02: Get all pizzas that have "AnchoviesTopping" topping.
     
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -195,7 +194,7 @@
     SELECT DISTINCT ?pizzaName
     WHERE { ?pizzaName rdfs:subClassOf pizza:Pizza. }
 
-    # Query 12: Get the names of the pizzas that have a country of originate from Italy.
+    # Query 12: Get the names of the pizzas that originate from Italy.
 
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
@@ -313,6 +312,7 @@
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
+    # NOTE: Requires inference to display the shown results.
     SELECT ?topping (COUNT(DISTINCT ?pizza) AS ?numPizzas)
     WHERE {
         ?pizza rdfs:subClassOf pizza:Pizza, ?restrTopping .
