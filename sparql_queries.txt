@@ -185,7 +185,7 @@
 
 3 queries that demonstrate the reasoning in the database, meaning that when reasoning is on there are more results extracted, compared to when reasoning is off.
 
-    # Query 11: Get the names of the toppings and the pizzas that have a topping with a name that starts with a consonant but ends with a vowel.
+    # Query 11: Get all names of all pizzas.
 
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
@@ -210,7 +210,7 @@
                       owl:hasValue pizza:Italy .
     }
 
-    # Query 13: Get the names of the pizzas that have a thin and crispy base.
+    # Query 13: Get the names of the toppings and the pizzas that have a topping with a name that starts with a consonant but ends with a vowel.
 
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
