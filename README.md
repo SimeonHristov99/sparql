@@ -17,7 +17,7 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 - [X] 2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.).
 - [X] 2 queries use assigning variables functions (BIND, BIND IF, VALUES).
 - [X] 2 queries use aggregating functions (COUNT, MIN, MAX, AVG, GROUP BY).
-- [ ] Finish documentation (~47 words explaining each query).
+- [X] Finish documentation.
 
 ## Resources
 
