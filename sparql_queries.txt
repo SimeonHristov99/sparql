@@ -36,7 +36,7 @@
 
     SELECT ?name
     WHERE {
-        ?name rdf:type owl:NamedIndividual .
+        ?name a owl:NamedIndividual .
     }
 
     # Query 04: Get all individuals that start with a vowel (aeiou).
@@ -49,7 +49,7 @@
     # Below we have 50 so as to start from the first character after the "#" symbol.
     SELECT ?name ?string ?substring
     WHERE {
-        ?name rdf:type owl:NamedIndividual .
+        ?name a owl:NamedIndividual .
         BIND(STR(?name) AS ?string) .
         BIND(SUBSTR(?string, 50) AS ?substring) .
         FILTER REGEX (?substring, "^(a|e|i|o|u)", "i") .
@@ -70,7 +70,7 @@
     }
     GROUP BY ?countryName
 
-    # Query 06: What is spiciness of the pizzas in each country?
+    # Query 06: What are the levels of spiciness of the pizzas in each country?
 
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
