@@ -11,7 +11,7 @@ Using the pizza ontology as created [here](https://protege.stanford.edu/ontologi
 - [X] Create repository.
 - [X] Create version 1 of documentation.
 - [X] 2 queries on classes or properties.
-- [ ] 5 queries on individuals.
+- [X] 5 queries on individuals.
 - [ ] 3 queries use more than one concept in the knowledge base and use more than once FILTER.
 - [ ] 2 queries use set operations (UNION, MINUS, ‘OPTIONAL’, ‘.).
 - [ ] 2 queries use assigning variables functions (BIND, BIND IF, VALUES).

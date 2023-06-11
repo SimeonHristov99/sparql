@@ -24,3 +24,87 @@
         ?restriction owl:onProperty pizza:hasTopping .
         ?restriction owl:someValuesFrom pizza:AnchoviesTopping .
     }
+
+
+5 queries on individuals.
+
+    # Query 03: Get all individuals.
+
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT ?name
+    WHERE {
+        ?name rdf:type owl:NamedIndividual .
+    }
+
+    # Query 04: Get all individuals that start with a vowel (aeiou).
+
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+    SELECT ?name ?string ?substring
+    WHERE {
+        ?name rdf:type owl:NamedIndividual .
+        BIND(STR(?name) AS ?string) .
+        BIND(SUBSTR(?string, 50) AS ?substring) .
+        FILTER REGEX (?substring, "^(a|e|i|o|u)", "i") .
+    }
+
+    # Query 05: How many pizzas are there from each country?
+
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT ?countryName (COUNT (DISTINCT ?name) AS ?numPizzas)
+    WHERE {
+        ?name rdfs:subClassOf pizza:NamedPizza, ?restr .
+        ?restr owl:onProperty pizza:hasCountryOfOrigin ;
+            owl:hasValue ?countryName .
+    }
+    GROUP BY ?countryName
+
+    # Query 06: What is spiciness of the pizzas in each country?
+
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT DISTINCT ?countryName ?pizzaName ?spiciness
+    WHERE {
+        ?pizzaName rdfs:subClassOf pizza:NamedPizza,
+                                ?restrCountry,
+                                ?restrTopping .
+        ?restrTopping owl:onProperty pizza:hasTopping ;
+                    owl:someValuesFrom ?topping .
+        ?topping rdfs:subClassOf ?restrToppingSpiciness.
+        ?restrToppingSpiciness owl:onProperty pizza:hasSpiciness ;
+                            owl:someValuesFrom ?spiciness .
+        ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                    owl:hasValue ?countryName .
+    }
+
+    # Query 07: Which countries have pizzas with toppings that are spicy (i.e. that have "Hot" spiciness) and how many are they.
+
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT DISTINCT ?countryName (COUNT(DISTINCT ?pizzaName) AS ?hotPizzaCount)
+    WHERE {
+        ?pizzaName rdfs:subClassOf pizza:NamedPizza, ?restrCountry, ?restrTopping .
+        ?restrTopping owl:onProperty pizza:hasTopping ;
+                    owl:someValuesFrom ?topping .
+        ?topping rdfs:subClassOf ?restrToppingSpiciness .
+        ?restrToppingSpiciness owl:onProperty pizza:hasSpiciness ;
+                            owl:someValuesFrom pizza:Hot .
+        ?restrCountry owl:onProperty pizza:hasCountryOfOrigin ;
+                    owl:hasValue ?countryName .
+    }
+    GROUP BY ?countryName
